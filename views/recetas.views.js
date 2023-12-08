@@ -89,8 +89,8 @@ function createRecetaListPage(recetas) {
     html += `
       <li class="recetas-total">
         <a href="/recetas/${recetas[i]._id}">${recetas[i].name}</a>
-        <a href="/recetas/${recetas[i]._id}/editar" class="button" id="editar">Editar</a>
-        <a href="/recetas/${recetas[i]._id}/eliminar" class="button" id="eliminar">Eliminar</a>
+        <a href="/recetas/editar/${recetas[i]._id}" class="button" id="editar">Editar</a>
+        <a href="/recetas/eliminar/${recetas[i]._id}" class="button" id="eliminar">Eliminar</a>
       </li>`;
   }
 
@@ -111,132 +111,18 @@ function createRecetaDetallePage(receta) {
   return html;
 }
 
-function createRecetaFormPage(recetas) {
-  let html = `
-    <style>
-      a {
-        text-decoration: none;
-        font-family: 'Montserrat', sans-serif;
-      }
-      nav {
-        background-color: #333;
-        color: #fff;
-        padding: 10px;
-      }
-      ul {
-        list-style: none;
-      }
-      li {
-        margin-bottom: 10px;
-      }
-      .button {
-        margin-left: 10px;
-      }
-
-      .boton-crear {
-        display: flex;
-        justify-content: center;
-        background-color: green;
-        padding: 20px;
-        border-radius: 10px;
-        margin-top: 100px;
-        color: white;
-      }
-
-      h1 {
-        text-align: center;
-        font-family: 'montserrat', sans-serif;
-      }
-
-      nav ul {
-        display: flex;
-        justify-content: center;
-      }
-
-      nav ul li a {
-        text-decoration: none;
-        color: white;
-        margin: 10px;
-      }
-
-      .recetas-total {
-        margin-top: 40px;
-      }
-
-      #editar {
-        background-color: black;
-        color: white;
-        padding: 4px;
-      }
-
-      #eliminar {
-        background-color: red;
-        color: white;
-        padding: 4px;
-      }
-    </style>
-
-    <nav>
-      <ul>
-        <li><a href="/recetas">Recetas</a></li>
-        <li><a href="/vegetarianas">Vegetarianas</a></li>
-        <li><a href="/veganas">Veganas</a></li>
-        <li><a href="/no-gluten">No gluten</a></li>
-        <li><a href="/no-lactosa">No lactosa</a></li>
-      </ul>
-    </nav>
-    <ul>`;
-  html += '<h1>Nueva receta</h1>';
-
-  html += `
-    <li>
-      <a href="/recetas/nuevo" class="boton-crear">Crear Nueva Receta</a>
-    </li>
-    `;
-
-    html += `
-    <li>
-      <h2>Crear Nueva Receta</h2>
-      <form action="/vegetarianas/nuevo" method="POST">
-        <label for="name">Nombre:</label>
-        <input type="text" name="name" id="name" placeholder="Nombre" required>
-        <br>
-        <label for="img">URL de la Imagen:</label>
-        <input type="text" name="img" id="img" placeholder="URL de la imagen" required>
-        <br>
-        <label for="description">Descripción:</label>
-        <textarea name="description" id="description" placeholder="Descripción" required></textarea>
-        <br>
-        <label for="ingredients">Ingredientes:</label>
-        <textarea name="ingredients" id="ingredients" placeholder="Ingredientes" required></textarea>
-        <br>
-        <label for="link">Enlace:</label>
-        <input type="text" name="link" id="link" placeholder="Enlace" required>
-        <br>
-        <label for="categoria">Categoría:</label>
-        <select name="categoria" id="categoria" required>
-          <option value="vegetariana">Vegetariana</option>
-          <option value="vegana">Vegana</option>
-          <option value="no-gluten">No Gluten</option>
-          <option value="no-lactosa">No Lactosa</option>
-        </select>
-        <br>
-        <button type="submit">Crear</button>
-      </form>
-    </li>
-    `;
-
-  for (let i = 0; i < recetas.length; i++) {
-    html += `
-      <li class="recetas-total">
-        <a href="/recetas/${recetas[i]._id}">${recetas[i].name}</a>
-        <a href="/recetas/${recetas[i]._id}/editar" class="button" id="editar">Editar</a>
-        <a href="/recetas/${recetas[i]._id}/eliminar" class="button" id="eliminar">Eliminar</a>
-      </li>`;
-  }
-
-  html += `</ul>`;
-  return createPage('', html);
+function createRecetaFormPage() {
+  let html = "<h1>Crear Receta</h1>";
+  html += '<form action="/api/recetas/" method="POST">';
+  html += '<input type="text" name="name" placeholder="Nombre">';
+  html += '<input type="text" name="img" placeholder="Imagen">';
+  html += '<input type="text" name="description" placeholder="Descripción">';
+  html += '<input type="text" name="ingredients" placeholder="Ingredientes">';
+  html += '<input type="text" name="link" placeholder="Link">';
+  html += '<input type="text" name="categoria" placeholder="Categoría">';
+  html += '<button type="submit">Crear</button>';
+  html += "</form>";
+  return createPage("", html);
 }
 
 
@@ -697,6 +583,162 @@ const crearFormularioEdicion = (receta) => {
   `;
 };
 
+// Formulario de Creación
+function createForm() {
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Crear Receta</title>
+      </head>
+      <body>
+        <h1>Crear Receta</h1>
+        <form action="/api/recetas/nuevo" method="POST">
+          <label for="name">Nombre:</label>
+          <input type="text" id="name" name="name" required><br>
+
+          <label for="img">Imagen:</label>
+          <input type="text" id="img" name="img"><br>
+
+          <label for="description">Descripción:</label>
+          <textarea id="description" name="description"></textarea><br>
+
+          <label for="ingredients">Ingredientes:</label>
+          <textarea id="ingredients" name="ingredients" required></textarea><br>
+
+          <label for="link">Enlace:</label>
+          <input type="text" id="link" name="link"><br>
+
+          <label for="categoria">Categoría:</label>
+          <input type="text" id="categoria" name="categoria"><br>
+
+          <button type="submit">Crear recetas</button>
+        </form>
+      </body>
+    </html>
+  `;
+}
+
+
+function editForm(receta) {
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Editar Receta</title>
+      </head>
+      <body>
+        <h1>Editar Receta</h1>
+        <form id="editarForm">
+          <label for="name">Nombre:</label>
+          <input type="text" id="name" name="name" value="${receta.name}" required><br>
+
+          <label for="description">Descripción:</label>
+          <textarea id="description" name="description" required>${receta.description}</textarea><br>
+
+          <label for="ingredients">Ingredientes:</label>
+          <textarea id="ingredients" name="ingredients" required>${receta.ingredientes}</textarea><br>
+
+          <label for="link">Enlace:</label>
+          <input type="text" id="link" name="link" value="${receta.link || ''}"><br>
+
+          <label for="categoria">Categoría:</label>
+          <input type="text" id="categoria" name="categoria" value="${receta.categoria || ''}"><br>
+
+          <button type="button" onclick="guardarCambios('${receta._id}')">Guardar Cambios</button>
+        </form>
+
+        <script>
+          function guardarCambios(id) {
+            const form = document.getElementById('editarForm');
+            const formData = new FormData(form);
+            const data = {};
+
+            formData.forEach((value, key) => {
+              data[key] = value;
+            });
+
+            if (confirm('¿Estás seguro de que deseas guardar los cambios?')) {
+              fetch(\`/api/recetas/\${id}\`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Error al guardar los cambios');
+                  }
+                  // Realizar alguna acción adicional si es necesario
+                  window.location.href = '/recetas'; // Redirige a la página de recetas, por ejemplo
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  // Manejar el error de acuerdo a tus necesidades
+                });
+            }
+          }
+        </script>
+      </body>
+    </html>
+  `;
+}
+
+
+
+function eliminarForm(receta) {
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Eliminar Receta</title>
+      </head>
+      <body>
+        <h1>Eliminar Receta</h1>
+        <p>¿Estás seguro de que deseas eliminar la receta "${receta.name}"?</p>
+        <button type="button" onclick="eliminarReceta('${receta._id}')">Eliminar</button>
+        <script>
+          function eliminarReceta(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar la receta?')) {
+              fetch(\`http://localhost:3333/api/recetas/\${id}\`, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Error al eliminar la receta');
+                  }
+                  // Realizar alguna acción adicional si es necesario
+                  window.location.href = '/recetas'; // Redirige a la página de recetas, por ejemplo
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  // Manejar el error de acuerdo a tus necesidades
+                });
+            }
+          }
+        </script>
+      </body>
+    </html>
+  `;
+}
+
+
+
+
+
+
+
+
 
 export {
   createPaginaRecetasNoLactosa,
@@ -709,5 +751,11 @@ export {
   createRecetaFormPage,
   mostrarFormularioEdicion,
   crearFormularioEliminar,
-  crearFormularioEdicion
+  crearFormularioEdicion,
+  createForm,
+  createPage, 
+  createRecetaList,
+  editForm,
+  eliminarForm
+
 };

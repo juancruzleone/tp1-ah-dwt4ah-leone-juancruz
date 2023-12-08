@@ -7,6 +7,7 @@ const db = client.db("AH20232CP1");
 
 const recetasFilePath = "./data/recetas.json";
 
+
 async function obtenerTodasLasRecetas() {
   try {
     const data = await readFile(recetasFilePath, "utf8");
@@ -16,179 +17,87 @@ async function obtenerTodasLasRecetas() {
   }
 }
 
-async function guardarRecetas(recetas) {
-  try {
-    await writeFile(recetasFilePath, JSON.stringify(recetas, null, 2), "utf8");
-  } catch (error) {
-    throw error;
-  }
+
+async function getRecetasVeganas(filter = {}) {
+  const filterMongo = { eliminado: { $ne: true } }
+
+  // Aplica filtros adicionales según tus necesidades
+
+  return db
+    .collection("veganas")
+    .find(filterMongo)
+    .toArray();
 }
 
-const obtenerRecetaPorId = async (id) => {
+async function getRecetasVegetarianas(filter = {}) {
+  const filterMongo = { eliminado: { $ne: true } }
+
+  // Aplica filtros adicionales según tus necesidades
+
+  return db
+    .collection("vegetarianas")
+    .find(filterMongo)
+    .toArray();
+}
+
+async function getRecetasNoGluten(filter = {}) {
+  const filterMongo = { eliminado: { $ne: true } }
+
+  // Aplica filtros adicionales según tus necesidades
+
+  return db
+    .collection("no-gluten")
+    .find(filterMongo)
+    .toArray();
+}
+
+async function getRecetasNoLactosa(filter = {}) {
+  const filterMongo = { eliminado: { $ne: true } }
+
+  // Aplica filtros adicionales según tus necesidades
+
+  return db
+    .collection("no-lactosa")
+    .find(filterMongo)
+    .toArray();
+}
+
+async function getRecetabyId(id) {
   return db.collection("recetas").findOne({ _id: new ObjectId(id) });
+}
+
+const createReceta = async (receta) => {
+  const recetaCreada = await db.collection("recetas").insertOne(receta);
+  receta._id = recetaCreada.insertedId;
+
+  return receta;
 };
 
-async function obtenerRecetaVeganaPorId(id) {
-  return db.collection("veganas").findOne({ _id: new ObjectId(id) });
-}
-
-async function obtenerRecetaVegetarianaPorId(id) {
-  return db.collection("vegetarianas").findOne({ _id: new ObjectId(id) });
-}
-
-async function obtenerRecetaNoGlutenPorId(id) {
-  return db.collection("no-gluten").findOne({ _id: new ObjectId(id) });
-}
-
-async function obtenerRecetaNoLactosaPorId(id) {
-  return db.collection("no-lactosa").findOne({ _id: new ObjectId(id) });
-}
-
-const crearRecetaVegana = async (recetaVegana) => {
-  const receta = await db.collection("veganas").insertOne(recetaVegana);
-  recetaVegana._id = receta.insertedId;
-
-  return recetaVegana;
+const replaceReceta = async (id, receta) => {
+  const recetaEditada = await db.collection("recetas").replaceOne({ _id: new ObjectId(id) }, receta);
+  return recetaEditada;
 };
 
-const crearRecetaVegetariana = async (recetaVegetariana) => {
-  const receta = await db.collection("vegetarianas").insertOne(recetaVegetariana);
-  recetaVegetariana._id = receta.insertedId;
-
-  return recetaVegetariana;
-};
-
-const crearRecetaNoGluten = async (recetaNoGluten) => {
-  const receta = await db.collection("no-gluten").insertOne(recetaNoGluten);
-  recetaNoGluten._id = receta.insertedId;
-
-  return recetaNoGluten;
-};
-
-const crearRecetaNoLactosa = async (recetaNoLactosa) => {
-  const receta = await db.collection("no-lactosa").insertOne(recetaNoLactosa);
-  recetaNoLactosa._id = receta.insertedId;
-
-  return recetaNoLactosa;
-};
-
-const modificarReceta = async (id, receta) => {
-  try {
-    const db = await getDB(); // Asegúrate de esperar a que se resuelva la promesa
-    const collection = db.collection('recetas');
-
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: receta }
-    );
-
-    if (result.modifiedCount > 0) {
-      const recetaModificada = await collection.findOne({ _id: new ObjectId(id) });
-      return recetaModificada;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
-
-
-async function editarReceta(id, datosActualizados) {
-  const productoEditado = await db.collection("recetas").updateOne({ _id: new ObjectId(id) }, { $set: datosActualizados });
-  return productoEditado;
+const editReceta = async (id, receta) => {
+  const recetaEditada = await db.collection("recetas").updateOne({ _id: new ObjectId(id) }, { $set: receta });
+  return recetaEditada;
 }
 
-
-async function editarRecetaVegana(id, datosActualizados) {
-  const productoEditado = await db.collection("veganas").updateOne({ _id: new ObjectId(id) }, { $set: datosActualizados });
-  return productoEditado;
-}
-
-async function editarRecetaVegetariana(id, datosActualizados) {
-  const productoEditado = await db.collection("vegetarianas").updateOne({ _id: new ObjectId(id) }, { $set: datosActualizados });
-  return productoEditado;
-}
-
-async function editarRecetaNoLactosa(id, datosActualizados) {
-  const productoEditado = await db.collection("no-lactosa").updateOne({ _id: new ObjectId(id) }, { $set: datosActualizados });
-  return productoEditado;
-}
-
-async function editarRecetaNoGluten(id, datosActualizados) {
-  const productoEditado = await db.collection("no-gluten").updateOne({ _id: new ObjectId(id) }, { $set: datosActualizados });
-  return productoEditado;
-}
-
-const eliminarRecetas = async (id) => {
-  const recetaEliminada = await db.collection("recetas").deleteOne({ _id: new ObjectId(id) }); 
+const eliminarReceta = async (id) => {
+  const recetaEliminada = await db.collection("recetas").deleteOne({ _id: new ObjectId(id) });
   return recetaEliminada;
 };
 
-const eliminarRecetaVegana = async (id) => {
-  const recetaEliminada = await db.collection("veganas").deleteOne({ _id: new ObjectId(id) }); 
-  return recetaEliminada;
-};
+async function getRecetasByCategoria(categoria) {
+  const filterMongo = {
+    eliminado: { $ne: true },
+    categoria: categoria
+  };
 
-const eliminarRecetaVegetariana = async (id) => {
-  const recetaEliminada = await db.collection("vegetarianas").deleteOne({ _id: new ObjectId(id) }); 
-  return recetaEliminada;
-};
-
-const eliminarRecetaNoGluten = async (id) => {
-  const recetaEliminada = await db.collection("no-gluten").deleteOne({ _id: new ObjectId(id) }); 
-  return recetaEliminada;
-};
-
-const eliminarRecetaNoLactosa = async (id) => {
-  const recetaEliminada = await db.collection("no-lactosa").deleteOne({ _id: new ObjectId(id) }); 
-  return recetaEliminada;
-};
-
-const eliminarRecetaPorId = async (id, coleccion) => {
-  try {
-    const result = await db.collection(coleccion).deleteOne({ _id: new ObjectId(id) });
-    
-    if (result.deletedCount === 1) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
-
-async function obtenerRecetasVeganas() {
-  try {
-    const data = await readFile(recetasFilePath, "utf8");
-    const recetas = JSON.parse(data);
-    const recetasVeganas = recetas.filter((receta) => receta.categoria === "Vegana");
-    return recetasVeganas;
-  } catch (error) {
-    throw error;
-  }
-}
-async function obtenerRecetasVegetarianas() {
-  try {
-    const data = await readFile(recetasFilePath, "utf8");
-    const recetas = JSON.parse(data);
-    const recetasVegetarianas = recetas.filter((receta) => receta.categoria === "Vegetariana");
-    return recetasVegetarianas;
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function obtenerRecetasNogluten() {
-  try {
-    const data = await readFile(recetasFilePath, "utf8");
-    const recetas = JSON.parse(data);
-    const recetasNoGluten = recetas.filter((receta) => receta.categoria === "Vegetariana");
-    return recetasNoGluten;
-  } catch (error) {
-    throw error;
-  }
+  return db
+    .collection("recetas")
+    .find(filterMongo)
+    .toArray();
 }
 
 async function obtenerRecetasPorColecciones(coleccion) {
@@ -200,42 +109,39 @@ async function obtenerRecetasPorColecciones(coleccion) {
   }
 }
 
-const remplazarProducto = async (id, producto) => {
-  const productoEditado = await db.collection("recetas").replaceOne({ _id: new ObjectId(id) }, producto);
-  return productoEditado;
-};
+async function modificarReceta(id, nuevaData) {
+  try {
+    const result = await db.collection("recetas").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: nuevaData }
+    );
+
+    if (result.modifiedCount === 0) {
+      throw new Error('No se encontró la receta para modificar');
+    }
+
+    console.log(`Receta modificada con éxito: ${id}`);
+  } catch (error) {
+    console.error("Error al modificar la receta:", error);
+    throw error;
+  }
+}
+
+
+
 
 export {
   obtenerTodasLasRecetas,
-  obtenerRecetasVeganas,
-  obtenerRecetasVegetarianas,
-  obtenerRecetasNogluten,
-  obtenerRecetasPorColecciones,
-  obtenerRecetaPorId,
-
-  crearRecetaVegana,
-  crearRecetaVegetariana,
-  crearRecetaNoGluten,
-  crearRecetaNoLactosa,
-
+  getRecetasVeganas,
+  getRecetasVegetarianas,
+  getRecetasNoGluten,
+  getRecetasNoLactosa,
+  getRecetabyId,
+  createReceta,
+  replaceReceta,
+  eliminarReceta,
+  editReceta,
+  getRecetasByCategoria,
   modificarReceta,
-  remplazarProducto,
-
-  editarRecetaVegana,
-  editarRecetaVegetariana,
-  editarRecetaNoGluten,
-  editarRecetaNoLactosa,
-  editarReceta,
-
-  eliminarRecetas,
-  eliminarRecetaVegana,
-  eliminarRecetaVegetariana,
-  eliminarRecetaNoGluten,
-  eliminarRecetaNoLactosa,
-  eliminarRecetaPorId,
-
-  obtenerRecetaVeganaPorId,
-  obtenerRecetaVegetarianaPorId,
-  obtenerRecetaNoGlutenPorId,
-  obtenerRecetaNoLactosaPorId
+  obtenerRecetasPorColecciones
 };

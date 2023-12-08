@@ -1,13 +1,39 @@
-import * as service from '../services/recetas.services.js';
+import * as service from "../services/recetas.services.js";
 import * as view from '../views/recetas.views.js';
 
-
-// Secciones
 const obtenerTodasLasRecetas = (req, res, next) => {
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
+  const isApiRequest = req.path.startsWith('/api/');
 
   service.obtenerRecetasPorColecciones("recetas")
     .then((recetas) => {
+      console.log('Recetas obtenidas:', recetas);
+      if (isApiRequest) {
+        res.json(recetas);
+      } else {
+        res.send(view.createRecetaListPage(recetas));
+      }
+    })
+    .catch((error) => {
+      console.error('Error al obtener recetas:', error); // Agrega mensajes de error más detallados
+      if (isApiRequest) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.send(view.createPaginaError('Error', `<p>${error}</p>`));
+      }
+    });
+};
+
+
+
+const getRecetasVeganas = (req, res, next) => {
+  console.log("Entrando al controlador getRecetas...");
+
+  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
+
+  service.obtenerRecetasPorColecciones("veganas")
+    .then((recetas) => {
+      console.log("Recetas obtenidas:", recetas);
+
       if (isApiRequest) {
         res.json(recetas); // Responder con JSON para solicitudes de API
       } else {
@@ -15,6 +41,8 @@ const obtenerTodasLasRecetas = (req, res, next) => {
       }
     })
     .catch((error) => {
+      console.error("Error al obtener recetas:", error);
+
       if (isApiRequest) {
         res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
       } else {
@@ -23,185 +51,24 @@ const obtenerTodasLasRecetas = (req, res, next) => {
     });
 };
 
-const obtenerRecetaPorId = (req, res) => {
-  const recetaId = req.params.id;
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
+const getRecetasVegetarianas = (req, res, next) => {
+  console.log("Entrando al controlador getRecetas...");
 
-  service.obtenerRecetaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        if (isApiRequest) {
-          res.json(receta); // Responder con JSON para solicitudes de API
-        } else {
-          res.send(view.createRecetaDetallePage(receta)); // Responder con HTML para solicitudes web
-        }
-      } else {
-        if (isApiRequest) {
-          res.status(404).json({ error: 'No se encontró la receta' }); // Responder con JSON en caso de error para solicitudes de API
-        } else {
-          res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>')); // Responder con HTML en caso de error para solicitudes web
-        }
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
-
-const obtenerRecetaVegetarianaPorId = (req, res) => {
-  const recetaId = req.params.id;
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
-
-  service.obtenerRecetaVegetarianaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        if (isApiRequest) {
-          res.json(receta); // Responder con JSON para solicitudes de API
-        } else {
-          res.send(view.createRecetaDetallePage(receta)); // Responder con HTML para solicitudes web
-        }
-      } else {
-        if (isApiRequest) {
-          res.status(404).json({ error: 'No se encontró la receta' }); // Responder con JSON en caso de error para solicitudes de API
-        } else {
-          res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>')); // Responder con HTML en caso de error para solicitudes web
-        }
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
-
-const obtenerRecetaVeganaPorId = (req, res) => {
-  const recetaId = req.params.id;
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
-
-  service.obtenerRecetaVeganaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        if (isApiRequest) {
-          res.json(receta); // Responder con JSON para solicitudes de API
-        } else {
-          res.send(view.createRecetaDetallePage(receta)); // Responder con HTML para solicitudes web
-        }
-      } else {
-        if (isApiRequest) {
-          res.status(404).json({ error: 'No se encontró la receta' }); // Responder con JSON en caso de error para solicitudes de API
-        } else {
-          res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>')); // Responder con HTML en caso de error para solicitudes web
-        }
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
-
-const obtenerRecetaNoGlutenPorId = (req, res) => {
-  const recetaId = req.params.id;
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
-
-  service.obtenerRecetaNoGlutenPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        if (isApiRequest) {
-          res.json(receta); // Responder con JSON para solicitudes de API
-        } else {
-          res.send(view.createRecetaDetallePage(receta)); // Responder con HTML para solicitudes web
-        }
-      } else {
-        if (isApiRequest) {
-          res.status(404).json({ error: 'No se encontró la receta' }); // Responder con JSON en caso de error para solicitudes de API
-        } else {
-          res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>')); // Responder con HTML en caso de error para solicitudes web
-        }
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
-
-const obtenerRecetaNoLactosaPorId = (req, res) => {
-  const recetaId = req.params.id;
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
-
-  service.obtenerRecetaNoLactosaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        if (isApiRequest) {
-          res.json(receta); // Responder con JSON para solicitudes de API
-        } else {
-          res.send(view.createRecetaDetallePage(receta)); // Responder con HTML para solicitudes web
-        }
-      } else {
-        if (isApiRequest) {
-          res.status(404).json({ error: 'No se encontró la receta' }); // Responder con JSON en caso de error para solicitudes de API
-        } else {
-          res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>')); // Responder con HTML en caso de error para solicitudes web
-        }
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
-
-
-
-const obtenerRecetasVeganas = (req, res, next) => {
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
-
-  service.obtenerRecetasPorColecciones("veganas")
-    .then((recetas) => {
-      if (isApiRequest) {
-        res.json(recetas); // Responder con JSON para solicitudes de API
-      } else {
-        res.send(view.createPaginaRecetasVeganas(recetas)); // Responder con HTML para solicitudes web
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
-
-const obtenerRecetasVegetarianas = (req, res, next) => {
   const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
 
   service.obtenerRecetasPorColecciones("vegetarianas")
     .then((recetas) => {
+      console.log("Recetas obtenidas:", recetas);
+
       if (isApiRequest) {
         res.json(recetas); // Responder con JSON para solicitudes de API
       } else {
-        res.send(view.createPaginaRecetasVegetarianas(recetas)); // Responder con HTML para solicitudes web
+        res.send(view.createRecetaListPage(recetas)); // Responder con HTML para solicitudes web
       }
     })
     .catch((error) => {
+      console.error("Error al obtener recetas:", error);
+
       if (isApiRequest) {
         res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
       } else {
@@ -210,38 +77,25 @@ const obtenerRecetasVegetarianas = (req, res, next) => {
     });
 };
 
-const obtenerRecetasNoGluten = (req, res, next) => {
-  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
 
-  service.obtenerRecetasPorColecciones("no-gluten")
-    .then((recetas) => {
-      if (isApiRequest) {
-        res.json(recetas); // Responder con JSON para solicitudes de API
-      } else {
-        res.send(view.createPaginaRecetasNoGluten(recetas)); // Responder con HTML para solicitudes web
-      }
-    })
-    .catch((error) => {
-      if (isApiRequest) {
-        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
-      } else {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
-      }
-    });
-};
+const getRecetasNoLactosa = (req, res, next) => {
+  console.log("Entrando al controlador getRecetas...");
 
-const obtenerRecetasNoLactosa = (req, res, next) => {
   const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
 
   service.obtenerRecetasPorColecciones("no-lactosa")
     .then((recetas) => {
+      console.log("Recetas obtenidas:", recetas);
+
       if (isApiRequest) {
         res.json(recetas); // Responder con JSON para solicitudes de API
       } else {
-        res.send(view.createPaginaRecetasNoLactosa(recetas)); // Responder con HTML para solicitudes web
+        res.send(view.createRecetaListPage(recetas)); // Responder con HTML para solicitudes web
       }
     })
     .catch((error) => {
+      console.error("Error al obtener recetas:", error);
+
       if (isApiRequest) {
         res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
       } else {
@@ -250,415 +104,150 @@ const obtenerRecetasNoLactosa = (req, res, next) => {
     });
 };
 
-// Crear receta
-const mostrarFormularioCrearReceta = (req, res) => {
-  res.send(view.createRecetaFormPage(recetas));
-};
-async function crearNuevaReceta(req, res) {
-  try {
-    const nuevaReceta = req.body; // Asume que los datos del formulario se envían en el cuerpo de la solicitud
-    const recetaCreada = await crearReceta(nuevaReceta); // Llama al servicio para crear la receta
-    res.status(201).json(recetaCreada);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
 
-// Editar receta
-const editarReceta = (req, res) => {
-  const recetaId = req.params.id;
-  const recetaEditada = {
+const getRecetasNoGluten = (req, res, next) => {
+  console.log("Entrando al controlador getRecetas...");
+
+  const isApiRequest = req.path.startsWith('/api/'); // Verificar si es una solicitud de API
+
+  service.obtenerRecetasPorColecciones("no-gluten")
+    .then((recetas) => {
+      console.log("Recetas obtenidas:", recetas);
+
+      if (isApiRequest) {
+        res.json(recetas); // Responder con JSON para solicitudes de API
+      } else {
+        res.send(view.createRecetaListPage(recetas)); // Responder con HTML para solicitudes web
+      }
+    })
+    .catch((error) => {
+      console.error("Error al obtener recetas:", error);
+
+      if (isApiRequest) {
+        res.status(500).json({ error: error.message }); // Responder con JSON en caso de error para solicitudes de API
+      } else {
+        res.send(view.createPaginaError('Error', `<p>${error}</p>`)); // Responder con HTML en caso de error para solicitudes web
+      }
+    });
+};
+
+
+const getRecetabyId = (req, res) => {
+  const idReceta = req.params.receta_id;
+  service.getRecetabyId(idReceta).then((receta) => {
+    if (receta) {
+      res.send(view.createPaginaDetalle(receta));
+    } else {
+      res.send(view.createPage("Error", "<p>No se encontró la receta</p>"));
+    }
+  });
+};
+
+const createRecetaFormPage = (req, res) => {
+  res.send(view.createForm());
+};
+
+const createReceta = (req, res) => {
+  const receta = {
     name: req.body.name,
+    img: req.body.img,
     description: req.body.description,
     ingredients: req.body.ingredients,
-    instructions: req.body.instructions,
+    link: req.body.link,
+    categoria: req.body.categoria,
   };
 
-  service.editarReceta(recetaId, recetaEditada)
-    .then(() => {
-      res.send(view.crearPaginaConfirmacion('Receta Editada', `<p>Receta ${recetaEditada.name} editada con éxito.</p>`));
+  service
+    .createReceta(receta)
+    .then((recetaNueva) => {
+      res.send(
+        view.createPage(
+          "Receta Creada",
+          `<p>Receta ${recetaNueva.name} creada con el id ${recetaNueva._id}</p>`
+        )
+      );
     })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
+    .catch((error) => res.send(view.createPage("Error", `<p> ${error}</p>`)));
 };
 
-const editarRecetaVegana = (req, res) => {
-  const recetaId = req.params.id;
-  const recetaEditada = {
+const editRecetaForm = (req, res) => {
+  const id = req.params.receta_id;
+  service.getRecetabyId(id).then((receta) => {
+    if (receta) {
+      res.send(view.editForm(receta));
+    } else {
+      res.send(
+        view.createPage(
+          "No se encontró la receta",
+          "<h1>No se encontró la receta solicitada</h1>"
+        )
+      );
+    }
+  });
+};
+
+const editReceta = (req, res) =>{
+  const id = req.params.receta_id
+
+  const receta = {
     name: req.body.name,
+    img: req.body.img,
     description: req.body.description,
     ingredients: req.body.ingredients,
-    instructions: req.body.instructions,
+    link: req.body.link,
+    categoria: req.body.categoria,
   };
 
-  service.editarRecetaVegana(recetaId, recetaEditada)
-    .then(() => {
-      res.send(view.crearPaginaConfirmacion('Receta Editada', `<p>Receta ${recetaEditada.name} editada con éxito.</p>`));
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const editarRecetaVegetariana = (req, res) => {
-  const recetaId = req.params.id;
-  const recetaEditada = {
-    name: req.body.name,
-    description: req.body.description,
-    ingredients: req.body.ingredients,
-    instructions: req.body.instructions,
-  };
-
-  service.editarRecetaVegetariana(recetaId, recetaEditada)
-    .then(() => {
-      res.send(view.crearPaginaConfirmacion('Receta Editada', `<p>Receta ${recetaEditada.name} editada con éxito.</p>`));
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-
-const editarRecetaNoGluten = (req, res) => {
-  const recetaId = req.params.id;
-  const recetaEditada = {
-    name: req.body.name,
-    description: req.body.description,
-    ingredients: req.body.ingredients,
-    instructions: req.body.instructions,
-  };
-
-  service.editarRecetaNoGluten(recetaId, recetaEditada)
-    .then(() => {
-      res.send(view.crearPaginaConfirmacion('Receta Editada', `<p>Receta ${recetaEditada.name} editada con éxito.</p>`));
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const editarRecetaNoLactosa = (req, res) => {
-  const recetaId = req.params.id;
-  const recetaEditada = {
-    name: req.body.name,
-    description: req.body.description,
-    ingredients: req.body.ingredients,
-    instructions: req.body.instructions,
-  };
-
-  service.editarRecetaNoLactosa(recetaId, recetaEditada)
-    .then(() => {
-      res.send(view.crearPaginaConfirmacion('Receta Editada', `<p>Receta ${recetaEditada.name} editada con éxito.</p>`));
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-
-
-
-const mostrarFormularioEditarReceta = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.crearFormularioEdicion(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
+  service.editReceta(id, receta)
+    .then( (recetaEditada) => {
+      if(recetaEditada){
+        res.send( view.createPage("Receta Modificada", `<h2>Receta #${recetaEditada._id} Modificada con éxito</h2>`) )
+      }else{
+        res.send( view.createPage( "No se pudo editar", "<h1>No se pudo editar</h1>" ) )
       }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEditarRecetaVegana = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaVeganaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.mostrarFormularioEdicion(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEditarRecetaVegetariana = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaVegetarianaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.mostrarFormularioEdicion(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEditarRecetaNoGluten = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaNoGlutenPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.mostrarFormularioEdicion(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEditarRecetaNoLactosa = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaNoLactosaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.mostrarFormularioEdicion(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-
-// Eliminar receta
-const mostrarFormularioEliminarReceta = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.crearFormularioEliminar(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-  const eliminarReceta = (req, res) => {
-    const recetaId = req.params.id;
-
-    service.eliminarRecetas(recetaId)
-      .then((recetaEliminada) => {
-        if (recetaEliminada) {
-          res.send(view.crearPaginaConfirmacion('Receta Eliminada', `<p>Receta #${recetaEliminada._id} eliminada con éxito.</p>`));
-        } else {
-          res.send(view.createPaginaError('Error', '<p>No se pudo eliminar la receta</p>'));
-        }
-      })
-      .catch((error) => {
-        res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-      });
-  };
-
-
-
-
-// Crear
-async function crearNuevaRecetaVegana(req, res) {
-  try {
-    const nuevaRecetaVegana = req.body; // Asume que los datos de la receta se encuentran en el cuerpo de la solicitud
-    const recetaCreada = await crearRecetaVegana(nuevaRecetaVegana);
-    res.status(201).json(recetaCreada);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    } )
 }
 
-async function crearNuevaRecetaVegetariana(req, res) {
-  try {
-    const nuevaRecetaVegetariana = req.body; // Asume que los datos de la receta se encuentran en el cuerpo de la solicitud
-    const recetaCreada = await crearRecetaVegetariana(nuevaRecetaVegetariana);
-    res.status(201).json(recetaCreada);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+const eliminarRecetaForm = (req, res) => {
+  const id = req.params.receta_id
+
+  service.getRecetabyId(id).then((receta) => {
+    if (receta) {
+      res.send(view.eliminarForm(receta));
+    } else {
+      res.send(
+        view.createPage(
+          "No se encontró la receta",
+          "<h1>No se encontró la receta solicitada</h1>"
+        )
+      );
+    }
+  });
 }
 
-async function crearNuevaRecetaNoGluten(req, res) {
-  try {
-    const nuevaRecetaNoGluten = req.body; // Asume que los datos de la receta se encuentran en el cuerpo de la solicitud
-    const recetaCreada = await crearRecetaNoGluten(nuevaRecetaNoGluten);
-    res.status(201).json(recetaCreada);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+const eliminarReceta = (req, res) => {
+  const id = req.params.receta_id
+  service.eliminarReceta(id)
+  .then( (recetaEliminada) => {
+    if(recetaEliminada){
+      res.send( view.createPage("Receta Eliminada", `<h2>Receta #${recetaEliminada._id} Eliminada con éxito</h2>`) )
+    }else{
+      res.send( view.createPage( "No se pudo eliminar", "<h1>No se pudo eliminar</h1>" ) )
+    }
+  } )
 }
 
-async function crearNuevaRecetaNoLactosa(req, res) {
-  try {
-    const nuevaRecetaNoLactosa = req.body; // Asume que los datos de la receta se encuentran en el cuerpo de la solicitud
-    const recetaCreada = await crearRecetaNoLactosa(nuevaRecetaNoLactosa);
-    res.status(201).json(recetaCreada);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-
-const mostrarFormularioEliminarRecetaVegana = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaVeganaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.crearFormularioEliminar(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEliminarRecetaNoGluten = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaNoGlutenPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.crearFormularioEliminar(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEliminarRecetaNoLactosa = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaNoLactosaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.crearFormularioEliminar(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const mostrarFormularioEliminarRecetaVegetariana = (req, res) => {
-  const recetaId = req.params.id;
-  service.obtenerRecetaVegetarianaPorId(recetaId)
-    .then((receta) => {
-      if (receta) {
-        res.send(view.crearFormularioEliminar(receta));
-      } else {
-        res.send(view.createPaginaError('Error', '<p>No se encontró la receta</p>'));
-      }
-    })
-    .catch((error) => {
-      res.send(view.createPaginaError('Error', `<p>${error}</p>`));
-    });
-};
-
-const eliminarRecetaVegana = (req, res) => {
-  const id = req.params.id;
-  service.eliminarRecetaVegana(id)
-    .then(() => {
-      res.status(204).json();
-    })
-    .catch((error) => res.status(500).json({ error: error.message }));
-};
-
-const eliminarRecetaVegetariana = (req, res) => {
-  const id = req.params.id;
-  service.eliminarRecetaVegetariana(id)
-    .then(() => {
-      res.status(204).json();
-    })
-    .catch((error) => res.status(500).json({ error: error.message }));
-};
-
-const eliminarRecetaNoLactosa = (req, res) => {
-  const id = req.params.id;
-  service.eliminarRecetaNoLactosa(id)
-    .then(() => {
-      res.status(204).json();
-    })
-    .catch((error) => res.status(500).json({ error: error.message }));
-};
-
-const eliminarRecetaNoGluten = (req, res) => {
-  const id = req.params.id;
-  service.eliminarRecetaNoGluten(id)
-    .then(() => {
-      res.status(204).json();
-    })
-    .catch((error) => res.status(500).json({ error: error.message }));
-};
-
-export {
-  // Obtener secciones
-  obtenerRecetaPorId,
+export { 
   obtenerTodasLasRecetas,
-  obtenerRecetasVeganas,
-  obtenerRecetasVegetarianas,
-  obtenerRecetasNoGluten,
-  obtenerRecetasNoLactosa,
-
-  // Crear
-  crearNuevaReceta,
-
-  obtenerRecetaVegetarianaPorId,
-  obtenerRecetaVeganaPorId,
-  obtenerRecetaNoGlutenPorId,
-  obtenerRecetaNoLactosaPorId,
-
-  editarRecetaVegana,
-  editarRecetaVegetariana,
-  editarRecetaNoGluten,
-  editarRecetaNoLactosa,
-
-  crearNuevaRecetaVegana,
-  crearNuevaRecetaVegetariana,
-  crearNuevaRecetaNoGluten,
-  crearNuevaRecetaNoLactosa,
-
-
-  mostrarFormularioEditarRecetaVegana,
-  mostrarFormularioEditarRecetaVegetariana,
-  mostrarFormularioEditarRecetaNoGluten,
-  mostrarFormularioEditarRecetaNoLactosa,
-
-  
-  mostrarFormularioCrearReceta,
-  mostrarFormularioEditarReceta,
-  editarReceta,
- 
-  eliminarReceta,
-
-  mostrarFormularioEliminarReceta,
-  mostrarFormularioEliminarRecetaVegana,
-  mostrarFormularioEliminarRecetaVegetariana,
-  mostrarFormularioEliminarRecetaNoGluten,
-  mostrarFormularioEliminarRecetaNoLactosa,
-
-
-
-
-  eliminarRecetaVegana,
-  eliminarRecetaVegetariana,
-  eliminarRecetaNoLactosa,
-  eliminarRecetaNoGluten,
-
+  getRecetasVeganas,
+  getRecetasVegetarianas,
+  getRecetasNoGluten,
+  getRecetasNoLactosa,
+  getRecetabyId,
+  createRecetaFormPage,
+  createReceta,
+  editRecetaForm,
+  editReceta,
+  eliminarRecetaForm,
+  eliminarReceta
 };

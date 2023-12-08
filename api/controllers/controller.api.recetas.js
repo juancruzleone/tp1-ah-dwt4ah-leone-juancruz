@@ -1,4 +1,5 @@
 import * as service from '../../services/recetas.services.js';
+import * as view from '../../views/recetas.views.js';
 import * as yup from 'yup';
 
 const obtenerTodasLasRecetas = (req, res) => {
@@ -60,25 +61,42 @@ const recetaSchema = yup.object({
   link: yup.string().required(),
 });
 
-const crearReceta = async (req, res) => {
-  const receta = {
-    name: req.body.name,
-    description: req.body.description,
-    ingredientes: req.body.ingredientes,
-    img: req.body.img,
-    categoria: Array.isArray(req.body.categoria) ? req.body.categoria : [req.body.categoria], // Convertir a un array si no es así por defecto
-    link: req.body.link,
+  const crearReceta = async (req, res) => {
+    const receta = {
+      name: req.body.name,
+      description: req.body.description,
+      ingredientes: req.body.ingredientes,
+      img: req.body.img,
+      categoria: Array.isArray(req.body.categoria) ? req.body.categoria : [req.body.categoria], // Convertir a un array si no es así por defecto
+      link: req.body.link,
+    };
+
+    try {
+      const recetaValidada = await recetaSchema.validate(req.body);
+      service.createReceta(recetaValidada).then((recetaNueva) => {
+        res.status(201).json(recetaNueva);
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   };
 
+  const mostrarFormularioCrearReceta = (req, res, recetas) => {
+    console.log(recetas); // Agrega esta línea para verificar las recetas
+    res.send(view.createRecetaFormPage(recetas));
+  };
+  
+
+async function crearNuevaReceta(req, res) {
   try {
-    const recetaValidada = await recetaSchema.validate(req.body);
-    service.crearReceta(recetaValidada).then((recetaNueva) => {
-      res.status(201).json(recetaNueva);
-    });
+    const nuevaReceta = req.body; // Asume que los datos del formulario se envían en el cuerpo de la solicitud
+    const recetaCreada = await crearReceta(nuevaReceta); // Llama al servicio para crear la receta
+    res.status(201).json(recetaCreada);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
+
 
 const modificarReceta = (req, res) => {
   const id = req.params.id;
@@ -146,7 +164,7 @@ const actualizarReceta = (req, res) => {
 const eliminarRecetas = (req, res) => {
   const id = req.params.id;
   service
-    .eliminarRecetas(id)
+    .eliminarReceta(id)
     .then(() => {
       res.status(204).json();
     })
@@ -187,7 +205,7 @@ const eliminarRecetaNoGluten = (req, res) => {
 
 const obtenerRecetaPorId = (req, res) => {
   const id = req.params.id;
-  service.obtenerRecetaPorId(id).then((receta) => {
+  service.getRecetabyId(id).then((receta) => {
     if (receta) {
       res.status(200).json(receta);
     } else {
@@ -237,5 +255,7 @@ export {
   eliminarRecetaVegetariana,
   eliminarRecetaNoLactosa,
   eliminarRecetaNoGluten,
-  eliminarRecetaPorId
+  eliminarRecetaPorId,
+
+  mostrarFormularioCrearReceta
 };

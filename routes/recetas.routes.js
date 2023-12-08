@@ -11,56 +11,59 @@ const router = express.Router();
 
 
 router.get('/recetas', recetaControllers.obtenerTodasLasRecetas);
-router.get('/recetas/:id', recetaControllers.obtenerRecetaPorId);
-router.get('/recetas/nuevo', recetaControllers.mostrarFormularioCrearReceta);
-router.post('/recetas/nuevo', recetaControllers.crearNuevaReceta);
+router.get("/recetas/nuevo", recetaControllers.createRecetaFormPage);
+router.post("/recetas/nuevo", recetaControllers.createReceta);
+router.get("/recetas/editar/:receta_id", recetaControllers.editRecetaForm);
+router.post("/recetas/editar/:receta_id", recetaControllers.editReceta);
+router.get("/recetas/eliminar/:receta_id", recetaControllers.eliminarRecetaForm);
+router.post("/recetas/eliminar/:receta_id", recetaControllers.eliminarReceta);
+router.get("/recetas/:receta_id", recetaControllers.getRecetabyId)
 
-router.get('/recetas/:id/editar', recetaControllers.mostrarFormularioEditarReceta);
-router.put('/recetas/:id/editar', recetaControllers.editarReceta);
-router.get('/recetas/:id/eliminar', recetaControllers.mostrarFormularioEliminarReceta);
-router.delete('/recetas/:id/eliminar', recetaControllers.eliminarReceta);
-
-
-router.get('/veganas', recetaControllers.obtenerRecetasVeganas);
-router.get('/veganas/:id', recetaControllers.obtenerRecetaVeganaPorId);
-router.get('/veganas/nuevo', recetaControllers.mostrarFormularioCrearReceta);
-router.post('/veganas/nuevo', recetaControllers.crearNuevaReceta);
-router.get('/veganas/:id/editar', recetaControllers.mostrarFormularioEditarRecetaVegana);
-router.post('/veganas/:id/editar', recetaControllers.editarRecetaVegana);
-router.get('/veganas/:id/eliminar', recetaControllers.mostrarFormularioEliminarRecetaVegana);
-router.post('/veganas/:id/eliminar', recetaControllers.eliminarRecetaVegana);
-//route.get("/recetas/:id", controllers.obtenerRecetasVeganasPorId);
+router.get("/veganas", recetaControllers.getRecetasVeganas);
+router.get("/veganas/nuevo", recetaControllers.createRecetaFormPage);
+router.post("/veganas/nuevo", recetaControllers.createReceta);
+router.get("/veganas/editar/:receta_id", recetaControllers.editRecetaForm);
+router.post("/veganas/editar/:receta_id", recetaControllers.editReceta);
+router.get("/veganas/eliminar/:receta_id", recetaControllers.eliminarRecetaForm);
+router.post("/veganas/eliminar/:receta_id", recetaControllers.eliminarReceta);
+router.get("/veganas/:receta_id", recetaControllers.getRecetabyId)
 
 
-
-router.get('/vegetarianas', recetaControllers.obtenerRecetasVegetarianas);
-router.get('/vegetarianas/:id', recetaControllers.obtenerRecetaVegetarianaPorId);
-router.get('/vegetarianas/nuevo', recetaControllers.mostrarFormularioCrearReceta);
-router.post('/vegetarianas/nuevo', recetaControllers.crearNuevaReceta);
-router.get('/vegetarianas/:id/editar', recetaControllers.mostrarFormularioEditarRecetaVegetariana);
-router.post('/vegetarianas/:id/editar', recetaControllers.editarRecetaVegetariana);
-router.get('/vegetarianas/:id/eliminar', recetaControllers.mostrarFormularioEliminarRecetaVegetariana);
-router.post('/vegetarianas/:id/eliminar', recetaControllers.eliminarRecetaVegetariana);
-
-
-router.get('/no-gluten', recetaControllers.obtenerRecetasNoGluten);
-router.get('/no-gluten/:id', recetaControllers.obtenerRecetaNoGlutenPorId);
-router.get('/no-gluten/nuevo', recetaControllers.mostrarFormularioCrearReceta);
-router.post('/no-gluten/nuevo', recetaControllers.crearNuevaReceta);
-router.get('/no-gluten/:id/editar', recetaControllers.mostrarFormularioEditarRecetaNoGluten);
-router.post('/no-gluten/:id/editar', recetaControllers.editarRecetaNoGluten);
-router.get('/no-gluten/:id/eliminar', recetaControllers.mostrarFormularioEliminarRecetaNoGluten);
-router.post('/no-gluten/:id/eliminar', recetaControllers.eliminarRecetaNoGluten)
+//router.get("/vegetarianas", recetaControllers.getRecetas);
+router.get("/vegetarianas", recetaControllers.getRecetasVegetarianas);
+router.get("/vegetarianas/nuevo", recetaControllers.createRecetaFormPage);
+router.post("/vegetarianas/nuevo", recetaControllers.createReceta);
+router.get("/vegetarianas/editar/:receta_id", recetaControllers.editRecetaForm);
+router.post("/vegetarianas/editar/:receta_id", recetaControllers.editReceta);
+router.get("/vegetarianas/eliminar/:receta_id", recetaControllers.eliminarRecetaForm);
+router.post("/vegetarianas/eliminar/:receta_id", recetaControllers.eliminarReceta);
+router.get("/vegetarianas/:receta_id", recetaControllers.getRecetabyId)
 
 
-router.get('/no-lactosa', recetaControllers.obtenerRecetasNoLactosa);
-router.get('/no-lactosa/:id', recetaControllers.obtenerRecetaNoLactosaPorId);
-router.get('/no-lactosa/nuevo', recetaControllers.mostrarFormularioCrearReceta);
-router.post('/no-lactosa/nuevo', recetaControllers.crearNuevaReceta);
-router.get('/no-lactosa/:id/editar', recetaControllers.mostrarFormularioEditarRecetaNoLactosa);
-router.post('/no-lactosa/:id/editar', recetaControllers.editarRecetaNoLactosa);
-router.get('/no-lactosa/:id/eliminar', recetaControllers.mostrarFormularioEliminarRecetaNoLactosa);
-router.post('/no-lactosa/:id/eliminar', recetaControllers.eliminarRecetaNoLactosa)
+
+//router.get("/no-gluten", recetaControllers.getRecetas);
+router.get("/no-gluten", recetaControllers.getRecetasNoGluten);
+router.get("/no-gluten/nuevo", recetaControllers.createRecetaFormPage);
+router.post("/no-gluten/nuevo", recetaControllers.createReceta);
+router.get("/no-gluten/editar/:receta_id", recetaControllers.editRecetaForm);
+router.post("/no-gluten/editar/:receta_id", recetaControllers.editReceta);
+router.get("/no-gluten/eliminar/:receta_id", recetaControllers.eliminarRecetaForm);
+router.post("/no-gluten/eliminar/:receta_id", recetaControllers.eliminarReceta);
+router.get("/no-gluten/:receta_id", recetaControllers.getRecetabyId)
+
+//router.get("/no-lactosa", recetaControllers.getRecetas);
+router.get("/no-lactosa", recetaControllers.getRecetasNoLactosa);
+router.get("/no-lactosa/nuevo", recetaControllers.createRecetaFormPage);
+router.post("/no-lactosa/nuevo", recetaControllers.createReceta);
+router.get("/no-lactosa/editar/:receta_id", recetaControllers.editRecetaForm);
+router.post("/no-lactosa/editar/:receta_id", recetaControllers.editReceta);
+router.get("/no-lactosa/eliminar/:receta_id", recetaControllers.eliminarRecetaForm);
+router.post("/no-lactosa/eliminar/:receta_id", recetaControllers.eliminarReceta);
+router.get("/no-lactosa/:receta_id", recetaControllers.getRecetabyId)
+
+
+
+
 
 
 
